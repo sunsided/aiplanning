@@ -18,7 +18,7 @@ namespace EightPuzzle
             var result = x.Cost.CompareTo(y.Cost);
 
             // these are simply to keep a stable search order
-            if (result == 0) result = x.VisitedNodeId.CompareTo(y.VisitedNodeId);
+            if (result == 0) result = -x.VisitedNodeId.CompareTo(y.VisitedNodeId);
             if (result == 0) result = x.Move.From.CompareTo(y.Move.From);
             if (result == 0) result = x.Move.To.CompareTo(y.Move.To);
 
