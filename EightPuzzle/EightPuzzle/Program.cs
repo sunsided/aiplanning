@@ -2,6 +2,7 @@
 // #define DumpIntermediateStates
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -78,6 +79,11 @@ namespace EightPuzzle
             // in this case, there are be multiple.
             var fringe = DeterminePossibleActions(0, 0, puzzle, puzzleWidth, costAlgorithm).ToList();
 
+            // map that helps counting the total number of nodes in each tree depth
+            // (maps tree depth to number)
+            var counter = new ConcurrentDictionary<int, int>();
+            counter.TryAdd(1, fringe.Count);
+
             // now we sort the fringe in order to keep a priority queue
             fringe.Sort(fringeComparer);
 
@@ -120,7 +126,17 @@ namespace EightPuzzle
                 // in the fringe, so are not required to be tested again.
                 foreach (var next in actions)
                 {
-                    if (visitedNodes.Any(node => IsSameState(node.State, next.State)))
+                    counter.AddOrUpdate(next.Depth, key => 1, (key, value) => value + 1);
+                    
+                    // prevent deadlocks by disallowing undoing the previous operation
+                    if (IsSameState(next.State, action.State)) continue;
+
+                    // test if the state has already been seen.
+                    // if so, discard the expanded node only if its cost is higher than the
+                    // cost of the already-registered node.
+                    // this allows us to keep shortcuts, if found.
+                    var identicalNode = visitedNodes.Where(node => IsSameState(node.State, next.State)).OrderBy(node => node.Cost).FirstOrDefault();
+                    if (identicalNode.Cost > 0 && identicalNode.Cost <= next.Cost)
                     {
                         continue;
                     }
