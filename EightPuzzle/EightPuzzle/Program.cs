@@ -443,7 +443,7 @@ namespace EightPuzzle
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
         /// <exception cref="ArgumentNullException">state;State was null</exception>
-        static void DumpState<T>(T state, int width, int height) where T : IReadOnlyList<int>
+        static void DumpState<T>(T state, int width, int height, int to = -1) where T : IReadOnlyList<int>
         {
             if (ReferenceEquals(state, null)) throw new ArgumentNullException("state", "State was null");
             var count = state.Count;
@@ -487,11 +487,19 @@ namespace EightPuzzle
                     }
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.BackgroundColor = toggle ? ConsoleColor.DarkBlue : ConsoleColor.DarkMagenta;
+
+                    // if the 'to' index is given, highlight the element
+                    if (i == to) Console.BackgroundColor = ConsoleColor.DarkGreen;
+
                     Console.Write(format, value);
                 }
                 else
                 {
                     Console.BackgroundColor = ConsoleColor.Black;
+
+                    // if the 'to' index is given, highlight the element
+                    if (to >= 0) Console.BackgroundColor = ConsoleColor.DarkGreen;
+
                     Console.Write(format, "");
                 }
             }
@@ -506,8 +514,9 @@ namespace EightPuzzle
         /// <param name="action">The action.</param>
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
+        /// <param name="highlightMove">if set to <see langword="true" /> [highlight move].</param>
         /// <exception cref="ArgumentNullException">state;State was null</exception>
-        static void DumpAction(Action action, int width, int height)
+        static void DumpAction(Action action, int width, int height, bool highlightMove = false)
         {
             var state = action.State;
 
@@ -519,9 +528,10 @@ namespace EightPuzzle
             else
             {
                 Console.WriteLine("Initial state");
+                highlightMove = false;
             }
 
-            DumpState(state, width, height);
+            DumpState(state, width, height, highlightMove ? action.Move.To : -1);
         }
 
         /// <summary>
@@ -536,6 +546,7 @@ namespace EightPuzzle
             // action in the visited nodes list
             var steps = new Stack<Action>();
             var parent = visitedNodes.Count - 1;
+            var finalState = visitedNodes[parent];
             do
             {
                 var action = visitedNodes[parent];
@@ -545,7 +556,7 @@ namespace EightPuzzle
 
             // prepare the console by reserving enough buffer lines to fit in the whole solution.
             // values are purely empirical.
-            var bufferLines = steps.Count*(puzzleHeight + 1) + 20;
+            var bufferLines = (steps.Count + 1)*(puzzleHeight + 1) + 20;
             Console.BufferHeight = Math.Max(Console.BufferHeight, bufferLines);
 
             // print the header
@@ -563,8 +574,13 @@ namespace EightPuzzle
                 }
 
                 var action = steps.Pop();
-                DumpAction(action, puzzleWidth, puzzleHeight);
+                DumpAction(action, puzzleWidth, puzzleHeight, highlightMove: true);
             }
+                
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Final state:");
+            Console.ResetColor();
+            DumpState(finalState.State, puzzleWidth, puzzleHeight);
         }
 
         /// <summary>
