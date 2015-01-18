@@ -27,6 +27,8 @@ namespace EightPuzzle
                 8, 3, 1
             };
 
+            puzzle = CreatePuzzle(width: puzzleWidth, height: puzzleHeight, seed: 0 /*1748953365*/);
+
             int[] goal =
             {
                 EmptyFieldValue, 1, 2,
@@ -255,6 +257,36 @@ namespace EightPuzzle
             {
                 throw new ArgumentOutOfRangeException("Attempted to access invalid index in state at " + index, ex);
             }
+        }
+
+        /// <summary>
+        /// Creates a new puzzle.
+        /// </summary>
+        /// <param name="seed">The seed.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <returns>System.Int32[].</returns>
+        static int[] CreatePuzzle(int width, int height, int seed = 0)
+        {
+            if (seed == 0) seed = (int)DateTime.UtcNow.Ticks;
+            Console.WriteLine("Creating {0}x{1} puzzle using seed {2}", width, height, seed);
+
+            var random = new Random(seed);
+
+            // prepare the list and add the empty value
+            var count = width*height - 1;
+            var list = new List<int> {EmptyFieldValue};
+            Debug.Assert(EmptyFieldValue <= 0, "EmptyFieldValue <= 0");
+
+            // create all valid tiles
+            for (int i = 1; i <= count; ++i)
+            {
+                list.Add(i);
+            }
+
+            // shuffle the list
+            var puzzle = list.OrderBy(value => random.NextDouble()).ToArray();
+            return puzzle;
         }
 
         #region Console output
