@@ -452,13 +452,13 @@ namespace EightPuzzle
             var blockSize = largestNumber.ToString().Length;
             var format = String.Format("{{0,{0}}}", blockSize+1);
 
-            Console.ForegroundColor = ConsoleColor.White;
             for (var i = 0; i < count; ++i)
             {
                 // apply a linebreak on row changes
                 if (++indexInRow == width)
                 {
                     indexInRow = 0;
+                    Console.ResetColor();
                     Console.WriteLine();
                 }
 
@@ -468,6 +468,7 @@ namespace EightPuzzle
                 // render the tile
                 if (value != EmptyFieldValue)
                 {
+                    Console.ForegroundColor = ConsoleColor.White;
                     Console.BackgroundColor = IsEven(value) ? ConsoleColor.DarkBlue : ConsoleColor.DarkMagenta;
                     Console.Write(format, value);
                 }
