@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using EightPuzzle.Costs;
 using EightPuzzle.Heuristics;
 using EightPuzzle.Weights;
@@ -11,7 +10,10 @@ using EightPuzzle.Weights;
 
 namespace EightPuzzle
 {
-    class Program
+    /// <summary>
+    /// Class Program.
+    /// </summary>
+    static class Program
     {
         private const int EmptyFieldValue = 0;
 
@@ -298,9 +300,10 @@ namespace EightPuzzle
         /// <summary>
         /// Creates a new puzzle.
         /// </summary>
-        /// <param name="seed">The seed.</param>
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
+        /// <param name="goal">The goal.</param>
+        /// <param name="seed">The seed.</param>
         /// <returns>System.Int32[].</returns>
         static int[] CreatePuzzle(int width, int height, out int[] goal, int seed = 0)
         {
@@ -347,6 +350,8 @@ namespace EightPuzzle
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="puzzle">The puzzle.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
         /// <returns><see langword="true" /> if the specified puzzle is solvable; otherwise, <see langword="false" />.</returns>
         static bool IsSolvable<T>(T puzzle, int width, int height) where T : IReadOnlyList<int>
         {
