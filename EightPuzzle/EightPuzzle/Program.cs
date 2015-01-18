@@ -449,8 +449,8 @@ namespace EightPuzzle
             var count = state.Count;
 
             var indexInRow = -1;
-            var rowEven = false;
             var evenWidth = IsEven(width);
+            var coords = new CoordinateProjection(width, height);
 
             // determine the largest number; one is subtracted
             // because of the empty tile
@@ -463,7 +463,6 @@ namespace EightPuzzle
                 // apply a linebreak on row changes
                 if (++indexInRow == width)
                 {
-                    rowEven = !rowEven;
                     indexInRow = 0;
                     Console.ResetColor();
                     Console.WriteLine();
@@ -477,9 +476,10 @@ namespace EightPuzzle
                 {
                     var valueEven = IsEven(value);
                     bool toggle;
+                    var rowEven = IsEven((value-1)/width);
                     if (evenWidth)
                     {
-                        toggle = (rowEven || valueEven) && (!rowEven || !valueEven);
+                        toggle = (!rowEven && !valueEven) || (rowEven && valueEven);
                     }
                     else
                     {
