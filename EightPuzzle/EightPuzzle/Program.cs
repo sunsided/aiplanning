@@ -535,6 +535,11 @@ namespace EightPuzzle
                 parent = action.VisitedNodeId;
             } while (parent >= 0);
 
+            // prepare the console by reserving enough buffer lines to fit in the whole solution.
+            // values are purely empirical.
+            var bufferLines = steps.Count*(puzzleHeight + 1) + 20;
+            Console.BufferHeight = Math.Max(Console.BufferHeight, bufferLines);
+
             // print the header
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Solution found in {0} steps, length {1} steps.", visitedNodes.Count, steps.Count);
