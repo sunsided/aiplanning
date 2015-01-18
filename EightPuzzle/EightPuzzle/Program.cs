@@ -17,24 +17,16 @@ namespace EightPuzzle
 
         static void Main()
         {
+#if GeneratePuzzle
             const int puzzleWidth = 3;
             const int puzzleHeight = 3;
 
-#if GeneratePuzzle
             int[] puzzle =
             {
                 7, 2, 4,
                 5, EmptyFieldValue, 6,
                 8, 3, 1
             };
-#else
-            /* For some reasons, the seed 1748953365
-             * creates a very hard to solve puzzle. 
-             * There are others that are equally bad,
-             * but this is a good starting point to investigate.
-             */
-            var puzzle = CreatePuzzle(width: puzzleWidth, height: puzzleHeight, seed: 1748953365);
-#endif
 
             int[] goal =
             {
@@ -42,6 +34,13 @@ namespace EightPuzzle
                 3, 4, 5,
                 6, 7, 8
             };
+#else
+            const int puzzleWidth = 4;
+            const int puzzleHeight = 4;
+
+            int[] goal;
+            var puzzle = CreatePuzzle(width: puzzleWidth, height: puzzleHeight, goal: out goal, seed: 185136261);
+#endif
 
 #if DumpIntermediateStates
             // dump the initial state
@@ -53,7 +52,7 @@ namespace EightPuzzle
             var weight = new SimpleWeight(goal, puzzleWidth, puzzleHeight);
 
             // select an heuristic
-            var heuristic = new EuclideanDistanceHeuristic(goal, puzzleWidth, puzzleHeight);
+            var heuristic = new ManhattanDistanceHeuristic(goal, puzzleWidth, puzzleHeight);
 
             // select the algorithm
             var costAlgorithm = new AStarCost(weight, heuristic);
@@ -284,7 +283,7 @@ namespace EightPuzzle
         static bool IsFreeSlotAt<T>(T state, int index) where T : IReadOnlyList<int>
         {
             if (ReferenceEquals(state, null)) throw new ArgumentNullException("state", "State must not be null");
-            if (index < 0) throw new ArgumentOutOfRangeException("index", "Index must be a positive number or zero");
+            if (index < 0 || index >= state.Count) throw new ArgumentOutOfRangeException("index", "Index must be a positive number or zero and smaller than the number of elements");
 
             try
             {
@@ -303,7 +302,7 @@ namespace EightPuzzle
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
         /// <returns>System.Int32[].</returns>
-        static int[] CreatePuzzle(int width, int height, int seed = 0)
+        static int[] CreatePuzzle(int width, int height, out int[] goal, int seed = 0)
         {
             if (seed == 0) seed = (int)DateTime.UtcNow.Ticks;
             Console.WriteLine("Creating {0}x{1} puzzle using seed {2}", width, height, seed);
@@ -312,7 +311,7 @@ namespace EightPuzzle
 
             // prepare the list and add the empty value
             var count = width*height - 1;
-            var list = new List<int> {EmptyFieldValue};
+            var list = new List<int>();
             Debug.Assert(EmptyFieldValue <= 0, "EmptyFieldValue <= 0");
 
             // create all valid tiles
@@ -320,6 +319,13 @@ namespace EightPuzzle
             {
                 list.Add(i);
             }
+
+            // in order for the implemented solvability test to work,
+            // the empty field is required to be on the last index
+            list.Add(EmptyFieldValue);
+
+            // export it as a goal
+            goal = list.ToArray();
 
             // shuffle the list until the puzzle is solvable.
             // this is a brute-force attempt; it would probably be easier
@@ -329,7 +335,10 @@ namespace EightPuzzle
             do
             {
                 puzzle = list.OrderBy(value => random.NextDouble()).ToArray();
-            } while (!IsSolvable(puzzle));
+            } while (!IsSolvable(puzzle, width, height));
+
+            DumpState(puzzle, width, height);
+
             return puzzle;
         }
 
@@ -339,11 +348,39 @@ namespace EightPuzzle
         /// <typeparam name="T"></typeparam>
         /// <param name="puzzle">The puzzle.</param>
         /// <returns><see langword="true" /> if the specified puzzle is solvable; otherwise, <see langword="false" />.</returns>
-        static bool IsSolvable<T>(T puzzle) where T : IReadOnlyList<int>
+        static bool IsSolvable<T>(T puzzle, int width, int height) where T : IReadOnlyList<int>
         {
+            // see:  http://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
+            // also: http://www.cs.princeton.edu/courses/archive/fall12/cos226/assignments/8puzzle.html
             var inversions = DetermineInversions(puzzle);
 
-            // if then number of inversions is even, the puzzle is solvable
+            // if the grid width is even, the solvability of
+            // the puzzle depends on the position of the empty place
+            if (IsEven(width))
+            {
+                // determine the position of the empty tile
+                var count = puzzle.Count;
+                var coords = new CoordinateProjection(width, height);
+                for (int i = 0; i < count; ++i)
+                {
+                    coords.DetermineFrom(i);
+                    if (puzzle[i] == EmptyFieldValue) break;
+                }
+
+                // if the empty tile is in an even row counting from the bottom
+                var rowFromBottom = height - coords.Y;
+                if (IsEven(rowFromBottom))
+                {
+                    // ... then the number of inversions must be odd
+                    return !IsEven(inversions);
+                }
+
+                // ... otherwise the number of inversions must be even
+                return IsEven(inversions);
+            }
+
+            // if the grid width is odd, then the number of inversions
+            // must be even to be able to solve the puzzle
             return IsEven(inversions);
         }
 
