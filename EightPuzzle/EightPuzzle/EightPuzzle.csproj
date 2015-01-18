@@ -47,6 +47,7 @@
     <Compile Include="Costs\GreedyBestFirstCost.cs" />
     <Compile Include="Costs\AStarCost.cs" />
     <Compile Include="Costs\CostBase.cs" />
+    <Compile Include="Heuristics\CombinedMisplacementDistanceHeuristic.cs" />
     <Compile Include="Heuristics\HeuristicBase.cs" />
     <Compile Include="Heuristics\EuclideanDistanceHeuristic.cs" />
     <Compile Include="Heuristics\ManhattanDistanceHeuristic.cs" />
