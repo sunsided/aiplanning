@@ -20,14 +20,21 @@ namespace EightPuzzle
             const int puzzleWidth = 3;
             const int puzzleHeight = 3;
 
+#if !GeneratePuzzle
             int[] puzzle =
             {
                 7, 2, 4,
                 5, EmptyFieldValue, 6,
                 8, 3, 1
             };
-
-            puzzle = CreatePuzzle(width: puzzleWidth, height: puzzleHeight, seed: 0 /*1748953365*/);
+#else
+            /* For some reasons, the seed 1748953365
+             * creates a very hard to solve puzzle. 
+             * There are others that are equally bad,
+             * but this is a good starting point to investigate.
+             */
+            var puzzle = CreatePuzzle(width: puzzleWidth, height: puzzleHeight, seed: 1748953365);
+#endif
 
             int[] goal =
             {
