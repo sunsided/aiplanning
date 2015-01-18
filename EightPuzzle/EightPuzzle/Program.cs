@@ -148,7 +148,11 @@ namespace EightPuzzle
         private static readonly Random _fringeRandom = new Random();
 
         /// <summary>
-        /// Takes from fringe.
+        /// Takes an item from fringe.
+        /// <para>
+        /// This implementation uses a Las Vegas algorithm in order
+        /// to (sometimes) speed up tree traversal.
+        /// </para>
         /// </summary>
         /// <param name="fringe">The fringe.</param>
         /// <returns>Action.</returns>
