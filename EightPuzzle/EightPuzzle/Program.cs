@@ -19,6 +19,8 @@ namespace EightPuzzle
 
         static void Main()
         {
+            Console.Title = "8 Puzzle Solver";
+
 #if GeneratePuzzle
             const int puzzleWidth = 3;
             const int puzzleHeight = 3;
