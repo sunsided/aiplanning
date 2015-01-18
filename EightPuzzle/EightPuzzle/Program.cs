@@ -1,12 +1,13 @@
-﻿using System;
+﻿// undefine to print out intermediate steps
+// #define DumpIntermediateStates
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using EightPuzzle.Costs;
 using EightPuzzle.Heuristics;
 using EightPuzzle.Weights;
-
-// #define DumpIntermediateStates
 
 namespace EightPuzzle
 {
@@ -49,7 +50,7 @@ namespace EightPuzzle
 #if DumpIntermediateStates
             // dump the initial state
             Console.WriteLine("Initial state:");
-            DumpState(puzzle, puzzleWidth);
+            DumpState(puzzle, puzzleWidth, puzzleHeight);
 #endif
 
             // select a weight calculation
@@ -100,7 +101,7 @@ namespace EightPuzzle
 #if DumpIntermediateStates
                 // dump the selected action
                 Console.WriteLine("Selected state #{0}, parent #{1}:", visitedNodeId, action.VisitedNodeId);
-                DumpState(action.State, puzzleWidth);
+                DumpState(action.State, puzzleWidth, puzzleHeight, action.Move.To);
 #endif
 
                 // determine if this is a goal state
