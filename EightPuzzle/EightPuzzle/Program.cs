@@ -67,7 +67,7 @@ namespace EightPuzzle
             var visitedNodes = new List<Action>
                                {
                                    // add the initial state
-                                   new Action(0, -1, default(Move), puzzle)
+                                   new Action(0, -1, default(Move), puzzle, 0)
                                };
 
             // the fringe contains all nodes that are actively considered
@@ -76,7 +76,7 @@ namespace EightPuzzle
 
             // we start by initially filling the fringe with a start node.
             // in this case, there are be multiple.
-            var fringe = DeterminePossibleActions(0, puzzle, puzzleWidth, costAlgorithm).ToList();
+            var fringe = DeterminePossibleActions(0, 0, puzzle, puzzleWidth, costAlgorithm).ToList();
 
             // now we sort the fringe in order to keep a priority queue
             fringe.Sort(fringeComparer);
@@ -112,7 +112,7 @@ namespace EightPuzzle
                 }
                 
                 // expand next-generation states and add them to the fringe.
-                var actions = DeterminePossibleActions(visitedNodeId, action.State, puzzleWidth, costAlgorithm);
+                var actions = DeterminePossibleActions(visitedNodeId, action.Depth, action.State, puzzleWidth, costAlgorithm);
 
                 // we add the new states to the fringe, but take out
                 // all actions that result in the same states we already tested.
@@ -205,16 +205,15 @@ namespace EightPuzzle
         /// Determines the possible actions from the current state.
         /// </summary>
         /// <param name="visitedNodeId">The visited node identifier.</param>
+        /// <param name="parentDepth">The parent depth.</param>
         /// <param name="state">The state.</param>
         /// <param name="width">The width.</param>
         /// <param name="costAlgorithm">The algorithm.</param>
         /// <returns>IEnumerable&lt;Action&gt;.</returns>
-        /// <exception cref="ArgumentNullException">
-        /// The state was <see langword="null"/>
+        /// <exception cref="ArgumentNullException">The state was <see langword="null" />
         /// or
-        /// the cost algorithm was <see langword="null"/>
-        /// </exception>
-        static IEnumerable<Action> DeterminePossibleActions(int visitedNodeId, int[] state, int width, ICost costAlgorithm)
+        /// the cost algorithm was <see langword="null" /></exception>
+        static IEnumerable<Action> DeterminePossibleActions(int visitedNodeId, int parentDepth, int[] state, int width, ICost costAlgorithm)
         {
             if (ReferenceEquals(state, null)) throw new ArgumentNullException("state", "State must not be null");
             if (ReferenceEquals(costAlgorithm, null)) throw new ArgumentNullException("costAlgorithm", "The algorithm must not be null");
@@ -246,10 +245,11 @@ namespace EightPuzzle
                 var down = i + width;
 
                 // check if the moves are possible
-                if (left >= rowStart && IsFreeSlotAt(state, left)) yield return CreateAction(visitedNodeId, state, i, left, costAlgorithm);
-                if (right <= rowEnd && IsFreeSlotAt(state, right)) yield return CreateAction(visitedNodeId, state, i, right, costAlgorithm);
-                if (up >= 0 && IsFreeSlotAt(state, up)) yield return CreateAction(visitedNodeId, state, i, up, costAlgorithm);
-                if (down <= lastValidIndex && IsFreeSlotAt(state, down)) yield return CreateAction(visitedNodeId, state, i, down, costAlgorithm);
+                var depth = parentDepth + 1;
+                if (left >= rowStart && IsFreeSlotAt(state, left)) yield return CreateAction(visitedNodeId, state, i, left, costAlgorithm, depth);
+                if (right <= rowEnd && IsFreeSlotAt(state, right)) yield return CreateAction(visitedNodeId, state, i, right, costAlgorithm, depth);
+                if (up >= 0 && IsFreeSlotAt(state, up)) yield return CreateAction(visitedNodeId, state, i, up, costAlgorithm, depth);
+                if (down <= lastValidIndex && IsFreeSlotAt(state, down)) yield return CreateAction(visitedNodeId, state, i, down, costAlgorithm, depth);
             }
         }
 
@@ -257,6 +257,7 @@ namespace EightPuzzle
         /// Creates the actual action / applies the state transition.
         /// </summary>
         /// <param name="visitedNodeId">The visited node identifier.</param>
+        /// <param name="parent">The parent.</param>
         /// <param name="prior">The a priori state.</param>
         /// <param name="from">From.</param>
         /// <param name="to">To.</param>
@@ -265,7 +266,7 @@ namespace EightPuzzle
         /// <exception cref="ArgumentNullException">The state was <see langword="null" />
         /// or
         /// the cost algorithm was <see langword="null" /></exception>
-        static Action CreateAction(int visitedNodeId, int[] prior, int from, int to, ICost costAlgorithm)
+        static Action CreateAction(int visitedNodeId, int[] prior, int from, int to, ICost costAlgorithm, int depth)
         {
             if (ReferenceEquals(prior, null)) throw new ArgumentNullException("prior", "State must not be null");
             if (ReferenceEquals(costAlgorithm, null)) throw new ArgumentNullException("costAlgorithm", "The algorithm must not be null");
@@ -278,7 +279,7 @@ namespace EightPuzzle
             var cost = costAlgorithm.DetermineCost(prior, posterior, move);
 
             // bundle the new action
-            return new Action(cost, visitedNodeId, move, posterior);
+            return new Action(cost, visitedNodeId, move, posterior, depth);
         }
 
         /// <summary>

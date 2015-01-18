@@ -29,18 +29,25 @@ namespace EightPuzzle
         public readonly int[] State;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Action"/> struct.
+        /// The depth in the search tree
+        /// </summary>
+        public readonly int Depth;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Action" /> struct.
         /// </summary>
         /// <param name="cost">The cost.</param>
         /// <param name="visitedNodeId">The visited node identifier.</param>
         /// <param name="move">The move.</param>
         /// <param name="state">The a-posteriori state.</param>
-        public Action(float cost, int visitedNodeId, Move move, int[] state)
+        /// <param name="depth">The depth.</param>
+        public Action(float cost, int visitedNodeId, Move move, int[] state, int depth)
         {
             Cost = cost;
             VisitedNodeId = visitedNodeId;
             Move = move;
             State = state;
+            Depth = depth;
         }
 
         #region Equality
