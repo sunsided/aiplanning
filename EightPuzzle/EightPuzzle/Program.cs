@@ -44,7 +44,7 @@ namespace EightPuzzle
             var weight = new SimpleWeight();
 
             // select an heuristic
-            var heuristic = new ManhattanDistanceHeuristic(goal, puzzleWidth, puzzleHeight);
+            var heuristic = new EuclideanDistanceHeuristic(goal, puzzleWidth, puzzleHeight);
 
             // select the algorithm
             var costAlgorithm = new AStarCost(weight, heuristic);
