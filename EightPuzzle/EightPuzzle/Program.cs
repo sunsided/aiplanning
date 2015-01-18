@@ -18,7 +18,7 @@ namespace EightPuzzle
         static void Main()
         {
             const int puzzleWidth = 3;
-            // const int puzzleHeight = 3;
+            const int puzzleHeight = 3;
 
             int[] puzzle =
             {
@@ -44,7 +44,7 @@ namespace EightPuzzle
             var weight = new SimpleWeight();
 
             // select an heuristic
-            var heuristic = new TotalMisplacedTilesHeuristic(goal);
+            var heuristic = new ManhattanDistanceHeuristic(goal, puzzleWidth, puzzleHeight);
 
             // select the algorithm
             var costAlgorithm = new AStarCost(weight, heuristic);
