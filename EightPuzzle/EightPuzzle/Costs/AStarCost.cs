@@ -41,7 +41,7 @@ namespace EightPuzzle.Costs
             if (ReferenceEquals(prior, null)) throw new ArgumentNullException("prior", "State must not be null");
             if (ReferenceEquals(posterior, null)) throw new ArgumentNullException("posterior", "State must not be null");
 
-            var weight = Weight.DetermineWeight(move);
+            var weight = Weight.DetermineWeight(posterior, move);
             var heuristic = Heuristic.DetermineHeuristic(posterior, move);
 
             // A* search determines it's path cost by summing weight and heuristic

@@ -42,7 +42,7 @@ namespace EightPuzzle.Costs
             if (ReferenceEquals(posterior, null)) throw new ArgumentNullException("posterior", "State must not be null");
             
             // Best-first search determines it's path cost by only using the path weight.
-            var cost = Weight.DetermineWeight(move);
+            var cost = Weight.DetermineWeight(posterior, move);
             return cost;
         }
     }

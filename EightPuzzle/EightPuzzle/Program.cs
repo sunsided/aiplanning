@@ -41,7 +41,7 @@ namespace EightPuzzle
 #endif
 
             // select a weight calculation
-            var weight = new SimpleWeight();
+            var weight = new SimpleWeight(goal, puzzleWidth, puzzleHeight);
 
             // select an heuristic
             var heuristic = new EuclideanDistanceHeuristic(goal, puzzleWidth, puzzleHeight);
