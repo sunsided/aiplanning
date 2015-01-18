@@ -19,7 +19,7 @@ namespace EightPuzzle
 
         static void Main()
         {
-#if GeneratePuzzle
+#if !GeneratePuzzle
             const int puzzleWidth = 3;
             const int puzzleHeight = 3;
 
@@ -37,8 +37,8 @@ namespace EightPuzzle
                 6, 7, 8
             };
 #else
-            const int puzzleWidth = 4;
-            const int puzzleHeight = 4;
+            const int puzzleWidth = 3;
+            const int puzzleHeight = 3;
 
             int[] goal;
             var puzzle = CreatePuzzle(width: puzzleWidth, height: puzzleHeight, goal: out goal, seed: 185136261);
@@ -445,6 +445,7 @@ namespace EightPuzzle
             var count = state.Count;
 
             var indexInRow = -1;
+            var rowEven = false;
 
             // determine the largest number; one is subtracted
             // because of the empty tile
@@ -457,6 +458,7 @@ namespace EightPuzzle
                 // apply a linebreak on row changes
                 if (++indexInRow == width)
                 {
+                    rowEven = !rowEven;
                     indexInRow = 0;
                     Console.ResetColor();
                     Console.WriteLine();
@@ -468,8 +470,11 @@ namespace EightPuzzle
                 // render the tile
                 if (value != EmptyFieldValue)
                 {
+                    var valueEven = IsEven(value);
+                    var toggle = (valueEven && !rowEven) ||
+                                 (valueEven);
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.BackgroundColor = IsEven(value) ? ConsoleColor.DarkBlue : ConsoleColor.DarkMagenta;
+                    Console.BackgroundColor = toggle ? ConsoleColor.DarkBlue : ConsoleColor.DarkMagenta;
                     Console.Write(format, value);
                 }
                 else
