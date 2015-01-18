@@ -134,7 +134,7 @@ namespace EightPuzzle
             }
             else
             {
-                DumpSuccess(visitedNodes, puzzleWidth);
+                DumpSuccess(visitedNodes, puzzleWidth, puzzleHeight);
             }
 
             // wait for keypress
@@ -395,22 +395,29 @@ namespace EightPuzzle
         /// <typeparam name="T"></typeparam>
         /// <param name="state">The state.</param>
         /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
         /// <exception cref="ArgumentNullException">state;State was null</exception>
-        static void DumpState<T>(T state, int width) where T : IReadOnlyList<int>
+        static void DumpState<T>(T state, int width, int height) where T : IReadOnlyList<int>
         {
             if (ReferenceEquals(state, null)) throw new ArgumentNullException("state", "State was null");
             var count = state.Count;
 
             var indexInRow = -1;
 
-            var sb = new StringBuilder();
+            // determine the largest number; one is subtracted
+            // because of the empty tile
+            var largestNumber = width * height - 1;
+            var blockSize = largestNumber.ToString().Length;
+            var format = String.Format("{{0,{0}}}", blockSize+1);
+
+            Console.ForegroundColor = ConsoleColor.White;
             for (var i = 0; i < count; ++i)
             {
                 // apply a linebreak on row changes
                 if (++indexInRow == width)
                 {
                     indexInRow = 0;
-                    sb.AppendLine();
+                    Console.WriteLine();
                 }
 
                 // fetch the value
@@ -419,16 +426,18 @@ namespace EightPuzzle
                 // render the tile
                 if (value != EmptyFieldValue)
                 {
-                    sb.Append(value);
+                    Console.BackgroundColor = IsEven(value) ? ConsoleColor.DarkBlue : ConsoleColor.DarkMagenta;
+                    Console.Write(format, value);
                 }
                 else
                 {
-                    sb.Append(' ');
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.Write(format, "");
                 }
             }
 
-            // print out the puzzle to the console
-            Console.WriteLine(sb.ToString());
+            Console.ResetColor();
+            Console.WriteLine();
         }
 
         /// <summary>
@@ -436,8 +445,9 @@ namespace EightPuzzle
         /// </summary>
         /// <param name="action">The action.</param>
         /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
         /// <exception cref="ArgumentNullException">state;State was null</exception>
-        static void DumpAction(Action action, int width)
+        static void DumpAction(Action action, int width, int height)
         {
             var state = action.State;
 
@@ -450,8 +460,8 @@ namespace EightPuzzle
             {
                 Console.WriteLine("Initial state");
             }
-            
-            DumpState(state, width);
+
+            DumpState(state, width, height);
         }
 
         /// <summary>
@@ -459,7 +469,8 @@ namespace EightPuzzle
         /// </summary>
         /// <param name="visitedNodes">The visited nodes.</param>
         /// <param name="puzzleWidth">Width of the puzzle.</param>
-        private static void DumpSuccess(IReadOnlyList<Action> visitedNodes, int puzzleWidth)
+        /// <param name="puzzleHeight">Height of the puzzle.</param>
+        private static void DumpSuccess(IReadOnlyList<Action> visitedNodes, int puzzleWidth, int puzzleHeight)
         {
             // unroll the solution, starting with the last added
             // action in the visited nodes list
@@ -487,7 +498,7 @@ namespace EightPuzzle
                 }
 
                 var action = steps.Pop();
-                DumpAction(action, puzzleWidth);
+                DumpAction(action, puzzleWidth, puzzleHeight);
             }
         }
 
