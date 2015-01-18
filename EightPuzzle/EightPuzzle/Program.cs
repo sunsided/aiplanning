@@ -321,9 +321,70 @@ namespace EightPuzzle
                 list.Add(i);
             }
 
-            // shuffle the list
-            var puzzle = list.OrderBy(value => random.NextDouble()).ToArray();
+            // shuffle the list until the puzzle is solvable.
+            // this is a brute-force attempt; it would probably be easier
+            // to just perform random (valid) moves for a given amount
+            // of iterations.
+            int[] puzzle;
+            do
+            {
+                puzzle = list.OrderBy(value => random.NextDouble()).ToArray();
+            } while (!IsSolvable(puzzle));
             return puzzle;
+        }
+
+        /// <summary>
+        /// Determines whether the specified puzzle is solvable.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="puzzle">The puzzle.</param>
+        /// <returns><see langword="true" /> if the specified puzzle is solvable; otherwise, <see langword="false" />.</returns>
+        static bool IsSolvable<T>(T puzzle) where T : IReadOnlyList<int>
+        {
+            var inversions = DetermineInversions(puzzle);
+
+            // if then number of inversions is even, the puzzle is solvable
+            return IsEven(inversions);
+        }
+
+        /// <summary>
+        /// Determines whether the specified value is even.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns><see langword="true" /> if the specified value is even; otherwise, <see langword="false" />.</returns>
+        static bool IsEven(int value)
+        {
+            // mask with 0x01 in order to check 
+            // if the value is even or odd
+            var mask = value & 0x01;
+            if (mask == 0) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Determines the inversions of the puzzle in order
+        /// to check solvability.
+        /// </summary>
+        /// <param name="puzzle">The puzzle.</param>
+        /// <returns>The number of inversions</returns>
+        static int DetermineInversions<T>(T puzzle) where T : IReadOnlyList<int>
+        {
+            var count = puzzle.Count;
+            var inversions = 0;
+            for (int i = 0; i < count; ++i)
+            {
+                var value = puzzle[i];
+                if (value == EmptyFieldValue) continue;
+
+                for (int j = i + 1; j < count; ++j)
+                {
+                    var comparand = puzzle[j];
+                    if (comparand == EmptyFieldValue) continue;
+                    if (value > puzzle[j]) ++inversions;
+                }
+            }
+
+            return inversions;
         }
 
         #region Console output
