@@ -19,7 +19,7 @@ namespace EightPuzzle
 
         static void Main()
         {
-#if !GeneratePuzzle
+#if GeneratePuzzle
             const int puzzleWidth = 3;
             const int puzzleHeight = 3;
 
@@ -41,7 +41,7 @@ namespace EightPuzzle
             const int puzzleHeight = 3;
 
             int[] goal;
-            var puzzle = CreatePuzzle(width: puzzleWidth, height: puzzleHeight, goal: out goal, seed: 185136261);
+            var puzzle = CreatePuzzle(width: puzzleWidth, height: puzzleHeight, goal: out goal, seed: 0);
 #endif
 
 #if DumpIntermediateStates
