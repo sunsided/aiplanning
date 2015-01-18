@@ -13,7 +13,7 @@ namespace EightPuzzle.Heuristics
         protected readonly int[] GoalState;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MisplacedTilesHeuristic" /> class.
+        /// Initializes a new instance of the <see cref="TotalMisplacedTilesHeuristic" /> class.
         /// </summary>
         /// <param name="goalState">Goal state.</param>
         /// <exception cref="ArgumentNullException">State must not be null</exception>

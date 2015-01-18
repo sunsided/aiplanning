@@ -5,14 +5,14 @@ namespace EightPuzzle.Heuristics
     /// <summary>
     /// Class MisplacedTilesHeuristic.
     /// </summary>
-    sealed class MisplacedTilesHeuristic : HeuristicBase
+    sealed class TotalMisplacedTilesHeuristic : HeuristicBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MisplacedTilesHeuristic"/> class.
+        /// Initializes a new instance of the <see cref="TotalMisplacedTilesHeuristic"/> class.
         /// </summary>
         /// <param name="goalState">State goal state.</param>
         /// <exception cref="ArgumentNullException">State must not be null</exception>
-        public MisplacedTilesHeuristic(int[] goalState)
+        public TotalMisplacedTilesHeuristic(int[] goalState)
             : base(goalState)
         {
         }

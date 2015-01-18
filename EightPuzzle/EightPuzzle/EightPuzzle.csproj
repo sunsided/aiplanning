@@ -49,7 +49,7 @@
     <Compile Include="ICost.cs" />
     <Compile Include="IWeight.cs" />
     <Compile Include="IHeuristic.cs" />
-    <Compile Include="Heuristics\MisplacedTilesHeuristic.cs" />
+    <Compile Include="Heuristics\TotalMisplacedTilesHeuristic.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -44,7 +44,7 @@ namespace EightPuzzle
             var weight = new SimpleWeight();
 
             // select an heuristic
-            var heuristic = new MisplacedTilesHeuristic(goal);
+            var heuristic = new TotalMisplacedTilesHeuristic(goal);
 
             // select the algorithm
             var costAlgorithm = new AStarCost(weight, heuristic);
