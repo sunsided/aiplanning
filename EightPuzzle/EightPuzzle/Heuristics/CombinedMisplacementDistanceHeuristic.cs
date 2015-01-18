@@ -38,10 +38,8 @@ namespace EightPuzzle.Heuristics
             _misplacementHeuristic = new TotalMisplacedTilesHeuristic(goalState, width, height);
             _distanceHeuristic = new EuclideanDistanceHeuristic(goalState, width, height);
 
-            // the largest distance that can occur in the distance heuristic,
-            // assuming that euclidean distance does not take the square root.
-            var largestDistance = width*width + height*height;
-            var largestHeuristic = largestDistance*(width*height);
+            // the largest heuristic equals the number of tiles
+            var largestHeuristic = (width*height);
 
             // determine the next-highest power of ten
             _baseFactor = (float)Math.Pow(10F, Math.Ceiling(Math.Log10(largestHeuristic)));
@@ -66,7 +64,7 @@ namespace EightPuzzle.Heuristics
             var distance = _distanceHeuristic.DetermineHeuristic(posterior, move);
 
             // combine both measures
-            return misplacement*_baseFactor + distance;
+            return distance*_baseFactor + misplacement;
         }
     }
 }
