@@ -444,6 +444,7 @@ namespace EightPuzzle
         /// <param name="state">The state.</param>
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
+        /// <param name="to">The index, the move was made to.</param>
         /// <exception cref="ArgumentNullException">state;State was null</exception>
         static void DumpState<T>(T state, int width, int height, int to = -1) where T : IReadOnlyList<int>
         {
@@ -452,7 +453,6 @@ namespace EightPuzzle
 
             var indexInRow = -1;
             var evenWidth = IsEven(width);
-            var coords = new CoordinateProjection(width, height);
 
             // determine the largest number; one is subtracted
             // because of the empty tile
