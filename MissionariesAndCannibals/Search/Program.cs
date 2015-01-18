@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Search
 {
-    class Program
+    /// <summary>
+    /// Class Program.
+    /// </summary>
+    static class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// Defines the entry point of the application.
+        /// </summary>
+        static void Main()
         {
+            Console.Title = "Missionaries and Cannibals";
+
             // the goal determination function
             Func<State, bool> isGoalState =
                 state =>
@@ -33,8 +38,10 @@ namespace Search
             {
                 if (fringe.Count == 0)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("No solution found.");
-                    Console.ReadKey(true);
+                    Console.ResetColor();
+                    if (Debugger.IsAttached) Console.ReadKey(true);
                     return;
                 }
 
@@ -44,7 +51,9 @@ namespace Search
                 // check for goal condition
                 if (isGoalState(node.State))
                 {
-                    Console.WriteLine("Found solution");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Found a solution");
+                    Console.ResetColor();
 
                     // determine stack trace
                     var stack = new Stack<SearchNode>();
@@ -73,8 +82,8 @@ namespace Search
                             trace.Parent.State.BoatLocation
                             );
                     }
-                    
-                    Console.ReadKey(true);
+
+                    if (Debugger.IsAttached) Console.ReadKey(true);
                     return;
                 }
 
@@ -86,7 +95,7 @@ namespace Search
         /// <summary>
         /// The set of possible actions
         /// </summary>
-        private static readonly Action[] PossibleActions = {
+        private static readonly Action[] _possibleActions = {
                 new Action(2, 0), // move two cannibals
                 new Action(1, 0), // move one cannibal
                 new Action(0, 2), // move two missionaries
@@ -99,11 +108,12 @@ namespace Search
         /// </summary>
         /// <param name="fringe">The fringe.</param>
         /// <param name="node">The node.</param>
+        /// <param name="anticipatedStates">The anticipated states.</param>
         private static void PerformStrategy(Queue<SearchNode> fringe, SearchNode node, HashSet<State> anticipatedStates)
         {
             var state = node.State;
             
-            foreach (var action in PossibleActions)
+            foreach (var action in _possibleActions)
             {
                 State newState;
 
