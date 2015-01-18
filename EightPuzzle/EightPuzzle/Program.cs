@@ -20,7 +20,7 @@ namespace EightPuzzle
             const int puzzleWidth = 3;
             const int puzzleHeight = 3;
 
-#if !GeneratePuzzle
+#if GeneratePuzzle
             int[] puzzle =
             {
                 7, 2, 4,
@@ -88,8 +88,7 @@ namespace EightPuzzle
                 }
 
                 // take the first item from the fringe
-                var action = fringe.First();
-                fringe.RemoveAt(0);
+                var action = TakeFromFringe(fringe);
 
                 // add the action to the visited nodes list
                 visitedNodes.Add(action);
@@ -112,7 +111,9 @@ namespace EightPuzzle
                 var actions = DeterminePossibleActions(visitedNodeId, action.State, puzzleWidth, costAlgorithm);
 
                 // we add the new states to the fringe, but take out
-                // all actions that result in the same state we started with
+                // all actions that result in the same states we already tested.
+                // the rationale is that all a posteriori states have been 
+                // in the fringe, so are not required to be tested again.
                 foreach (var next in actions)
                 {
                     if (visitedNodes.Any(node => IsSameState(node.State, next.State)))
@@ -138,6 +139,35 @@ namespace EightPuzzle
 
             // wait for keypress
             if (Debugger.IsAttached) Console.ReadKey(true);
+        }
+
+        /// <summary>
+        /// The randomizer for the fringe
+        /// </summary>
+        private static readonly Random _fringeRandom = new Random();
+
+        /// <summary>
+        /// Takes from fringe.
+        /// </summary>
+        /// <param name="fringe">The fringe.</param>
+        /// <returns>Action.</returns>
+        private static Action TakeFromFringe(List<Action> fringe)
+        {
+            var first = fringe.First();
+            var count = fringe.Count;
+
+            // determine the last index with the same cost
+            int lastIndexWithSameCost;
+            for (lastIndexWithSameCost = 0; lastIndexWithSameCost < count-1; ++lastIndexWithSameCost)
+            {
+                if (fringe[lastIndexWithSameCost + 1].Cost > first.Cost) break;
+            }
+
+            // randomly select an instance from the range
+            var selectedIndex = _fringeRandom.Next(0, lastIndexWithSameCost + 1);
+            var selected = fringe[selectedIndex];
+            fringe.RemoveAt(selectedIndex);
+            return selected;
         }
 
         /// <summary>
