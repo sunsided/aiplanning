@@ -1,4 +1,4 @@
-﻿// undefine to print out intermediate steps
+// uncomment to print out intermediate steps
 // #define DumpIntermediateStates
 
 using System;
