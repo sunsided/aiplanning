@@ -46,7 +46,7 @@ namespace EightPuzzle.Heuristics
             var tileCoords = new CoordinateProjection(Width, Height);
             var goalCoords = new CoordinateProjection(Width, Height);
 
-            var sumOfDistances = 0;
+            var sumOfDistances = 0F;
             for (var i = 0; i < count; ++i)
             {
                 tileCoords.DetermineFrom(i);
@@ -73,7 +73,7 @@ namespace EightPuzzle.Heuristics
                 // is always fulfilled.
                 var xdistance = goalCoords.X - tileCoords.X;
                 var ydistance = goalCoords.Y - tileCoords.Y;
-                var distance = xdistance*xdistance + ydistance*ydistance;
+                var distance = (float)xdistance * xdistance + (float)ydistance * ydistance;
                 sumOfDistances += distance;
             }
 
