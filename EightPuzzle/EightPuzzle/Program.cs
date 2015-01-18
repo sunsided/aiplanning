@@ -450,6 +450,7 @@ namespace EightPuzzle
 
             var indexInRow = -1;
             var rowEven = false;
+            var evenWidth = IsEven(width);
 
             // determine the largest number; one is subtracted
             // because of the empty tile
@@ -475,8 +476,15 @@ namespace EightPuzzle
                 if (value != EmptyFieldValue)
                 {
                     var valueEven = IsEven(value);
-                    var toggle = (valueEven && !rowEven) ||
-                                 (valueEven);
+                    bool toggle;
+                    if (evenWidth)
+                    {
+                        toggle = (rowEven || valueEven) && (!rowEven || !valueEven);
+                    }
+                    else
+                    {
+                        toggle = valueEven;
+                    }
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.BackgroundColor = toggle ? ConsoleColor.DarkBlue : ConsoleColor.DarkMagenta;
                     Console.Write(format, value);
