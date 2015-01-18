@@ -112,10 +112,6 @@ namespace EightPuzzle
                     {
                         continue;
                     }
-                    if (fringe.Any(node => IsSameState(node.State, next.State)))
-                    {
-                        continue;
-                    }
                     fringe.Add(next);
                 }
 
