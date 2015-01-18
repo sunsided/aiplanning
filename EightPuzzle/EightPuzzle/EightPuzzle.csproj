@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="ActionByWeightComparer.cs" />
+    <Compile Include="Costs\BestFirstCost.cs" />
+    <Compile Include="Costs\GreedyBestFirstCost.cs" />
     <Compile Include="Costs\AStarCost.cs" />
     <Compile Include="Costs\CostBase.cs" />
     <Compile Include="Heuristics\HeuristicBase.cs" />
