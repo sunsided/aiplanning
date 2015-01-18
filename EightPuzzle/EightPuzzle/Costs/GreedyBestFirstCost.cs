@@ -1,5 +1,4 @@
 ﻿using System;
-using EightPuzzle.Weights;
 
 namespace EightPuzzle.Costs
 {
@@ -18,7 +17,7 @@ namespace EightPuzzle.Costs
         /// or
         /// Heuristic was <see langword="null"/>
         /// </exception>
-        public GreedyBestFirstCost(SimpleWeight weight, IHeuristic heuristic)
+        public GreedyBestFirstCost(IWeight weight, IHeuristic heuristic)
             : base(weight, heuristic)
         {
         }

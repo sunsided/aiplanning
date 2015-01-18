@@ -1,5 +1,4 @@
 ﻿using System;
-using EightPuzzle.Weights;
 
 namespace EightPuzzle.Costs
 {
@@ -11,7 +10,7 @@ namespace EightPuzzle.Costs
         /// <summary>
         /// The weight
         /// </summary>
-        protected readonly SimpleWeight Weight;
+        protected readonly IWeight Weight;
 
         /// <summary>
         /// The heuristic
@@ -28,7 +27,7 @@ namespace EightPuzzle.Costs
         /// or
         /// Heuristic was <see langword="null"/>
         /// </exception>
-        protected CostBase(SimpleWeight weight, IHeuristic heuristic)
+        protected CostBase(IWeight weight, IHeuristic heuristic)
         {
             if (ReferenceEquals(weight, null)) throw new ArgumentNullException("weight", "Weight must not be null");
             if (ReferenceEquals(heuristic, null)) throw new ArgumentNullException("heuristic", "Heuristic must not be null");

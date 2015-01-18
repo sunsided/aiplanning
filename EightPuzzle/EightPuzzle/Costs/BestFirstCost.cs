@@ -18,7 +18,7 @@ namespace EightPuzzle.Costs
         /// or
         /// Heuristic was <see langword="null"/>
         /// </exception>
-        public BestFirstCost(SimpleWeight weight, IHeuristic heuristic)
+        public BestFirstCost(IWeight weight, IHeuristic heuristic)
             : base(weight, heuristic)
         {
         }
