@@ -138,11 +138,7 @@ namespace EightPuzzle
                     // if so, discard the expanded node only if its cost is higher than the
                     // cost of the already-registered node.
                     // this allows us to keep shortcuts, if found.
-                    var identicalNode = visitedNodes.Where(node => IsSameState(node.State, next.State)).OrderBy(node => node.Cost).FirstOrDefault();
-                    if (identicalNode.Cost > 0 && identicalNode.Cost <= next.Cost)
-                    {
-                        continue;
-                    }
+                    if (WasAlreadyAnticipated(visitedNodes, next)) continue;
 
                     // skip elements that are already in the fringe
                     // if (IsElementInFringe(fringe, next)) continue;
@@ -166,6 +162,27 @@ namespace EightPuzzle
 
             // wait for keypress
             if (Debugger.IsAttached) Console.ReadKey(true);
+        }
+
+        /// <summary>
+        /// Determines whether the specified element was already anticipated for expansion.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="visitedNodes">The visited nodes.</param>
+        /// <param name="next">The next.</param>
+        /// <returns><see langword="true" /> if the specified element was already anticipated; otherwise, <see langword="false" />.</returns>
+        private static bool WasAlreadyAnticipated<T>(T visitedNodes, Action next) where T : IReadOnlyList<Action>
+        {
+            for (var f = 0; f < visitedNodes.Count; ++f)
+            {
+                if (!IsSameState(visitedNodes[f].State, next.State)) continue;
+                if (visitedNodes[f].Cost > next.Cost)
+                {
+                    Debugger.Break();
+                }
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
