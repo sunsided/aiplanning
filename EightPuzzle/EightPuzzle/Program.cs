@@ -302,7 +302,6 @@ namespace EightPuzzle
         /// Creates the actual action / applies the state transition.
         /// </summary>
         /// <param name="visitedNodeId">The visited node identifier.</param>
-        /// <param name="parent">The parent.</param>
         /// <param name="prior">The a priori state.</param>
         /// <param name="from">From.</param>
         /// <param name="to">To.</param>
