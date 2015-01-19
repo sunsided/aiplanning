@@ -17,7 +17,7 @@ namespace EightPuzzle
     /// </summary>
     static class Program
     {
-        private const int EmptyFieldValue = 0;
+        public const int EmptyFieldValue = 0;
 
         static void Main()
         {

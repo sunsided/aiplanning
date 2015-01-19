@@ -55,6 +55,9 @@ namespace EightPuzzle.Heuristics
                 // if the block is already at the required location,
                 // skip to the next block (this adds 0 to the sum-of-distance, as expected)
                 if (block == goal[i]) continue;
+
+                // skip the empty place
+                if (block == Program.EmptyFieldValue) continue;
                 
                 // since the block is not already correct,
                 // let's find out where it should be.

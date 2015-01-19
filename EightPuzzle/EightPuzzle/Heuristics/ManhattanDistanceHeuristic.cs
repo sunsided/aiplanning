@@ -42,7 +42,7 @@ namespace EightPuzzle.Heuristics
             var tileCoords = new CoordinateProjection(Width, Height);
             var goalCoords = new CoordinateProjection(Width, Height);
 
-            var sumOfDistances = 0;
+            var sumOfDistances = 0F;
             for (var i = 0; i < count; ++i)
             {
                 tileCoords.DetermineFrom(i);
@@ -51,7 +51,10 @@ namespace EightPuzzle.Heuristics
                 // if the block is already at the required location,
                 // skip to the next block (this adds 0 to the sum-of-distance, as expected)
                 if (block == goal[i]) continue;
-                
+
+                // skip the empty place
+                if (block == Program.EmptyFieldValue) continue;
+
                 // since the block is not already correct,
                 // let's find out where it should be.
                 goalCoords.Reset();
