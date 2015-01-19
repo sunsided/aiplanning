@@ -23,15 +23,15 @@ namespace EightPuzzle
         {
             Console.Title = "8 Puzzle Solver";
 
-#if GeneratePuzzle
+#if !GeneratePuzzle
             const int puzzleWidth = 3;
             const int puzzleHeight = 3;
 
             int[] puzzle =
             {
-                7, 2, 4,
-                5, EmptyFieldValue, 6,
-                8, 3, 1
+                1, 6, 4,
+                8, 7, EmptyFieldValue,
+                3, 2, 5
             };
 
             int[] goal =
@@ -138,6 +138,7 @@ namespace EightPuzzle
                     // if so, discard the expanded node only if its cost is higher than the
                     // cost of the already-registered node.
                     // this allows us to keep shortcuts, if found.
+                    /*
                     var identicalNode = visitedNodes.Where(node => IsSameState(node.State, next.State)).OrderBy(node => node.Cost).FirstOrDefault();
                     if (identicalNode.Cost > 0 && identicalNode.Cost <= next.Cost)
                     {
