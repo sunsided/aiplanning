@@ -110,6 +110,18 @@ namespace EightPuzzle
                 var visitedNodeId = visitedNodes.Count - 1;
 
                 // add to hash for quick look-up
+                Action known;
+                if (visitedNodesHash.TryGetValue(action, out known))
+                {
+                    if (known.Cost > action.Cost)
+                    {
+                        visitedNodesHash.Remove(known);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
                 visitedNodesHash.Add(action, action);
 
 #if DumpIntermediateStates
@@ -126,7 +138,7 @@ namespace EightPuzzle
                 }
                 
                 // expand next-generation states and add them to the fringe.
-                var actions = DeterminePossibleActions(visitedNodeId, action.Depth, action.State, puzzleWidth, costAlgorithm, action.Cost);
+                var actions = DeterminePossibleActions(visitedNodeId, action.Depth, action.State, puzzleWidth, costAlgorithm, action.Depth);
                 
                 // we add the new states to the fringe, but take out
                 // all actions that result in the same states we already tested.
@@ -206,7 +218,6 @@ namespace EightPuzzle
                 {
                     // this is a short-cut, so allow it
                     // take care of collisions in the dictionary though
-                    Debugger.Break();
                     return false;
                 }
                 return true;
