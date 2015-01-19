@@ -120,6 +120,9 @@ namespace EightPuzzle
                 // expand next-generation states and add them to the fringe.
                 var actions = DeterminePossibleActions(visitedNodeId, action.Depth, action.State, puzzleWidth, costAlgorithm);
 
+                // fetch the parent
+                var parent = visitedNodes[action.VisitedNodeId];
+
                 // we add the new states to the fringe, but take out
                 // all actions that result in the same states we already tested.
                 // the rationale is that all a posteriori states have been 
@@ -127,9 +130,9 @@ namespace EightPuzzle
                 foreach (var next in actions)
                 {
                     counter.AddOrUpdate(next.Depth, key => 1, (key, value) => value + 1);
-                    
+
                     // prevent deadlocks by disallowing undoing the previous operation
-                    if (IsSameState(next.State, action.State)) continue;
+                    if (IsSameState(next.State, parent.State)) continue;
 
                     // test if the state has already been seen.
                     // if so, discard the expanded node only if its cost is higher than the
