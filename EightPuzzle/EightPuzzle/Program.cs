@@ -29,9 +29,9 @@ namespace EightPuzzle
 
             int[] puzzle =
             {
-                8, 1, 7,
-                4, 5, 6,
-                2, EmptyFieldValue, 3
+                7, 2, 4,
+                5, EmptyFieldValue, 6,
+                8, 3, 1
             };
 
             int[] goal =
