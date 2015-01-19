@@ -203,7 +203,7 @@ namespace EightPuzzle
         /// </summary>
         /// <param name="fringe">The fringe.</param>
         /// <returns>Action.</returns>
-        private static Action TakeFromFringe(List<Action> fringe)
+        private static Action TakeFromFringe<T>(T fringe) where T : IList<Action>
         {
             var first = fringe.First();
             var count = fringe.Count;
