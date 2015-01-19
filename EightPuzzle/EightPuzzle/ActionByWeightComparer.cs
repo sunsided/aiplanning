@@ -19,7 +19,7 @@ namespace EightPuzzle
 
             // these are simply to keep a stable search order
             if (result == 0) result = -x.VisitedNodeId.CompareTo(y.VisitedNodeId);
-            if (result == 0) result = x.Depth.CompareTo(y.Depth);
+            //if (result == 0) result = x.Depth.CompareTo(y.Depth);
             return result;
         }
     }
