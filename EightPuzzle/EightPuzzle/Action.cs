@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Linq;
 
 namespace EightPuzzle
 {
     /// <summary>
     /// Struct Action
     /// </summary>
-    internal struct Action : IEquatable<Action>
+    internal sealed class Action : IEquatable<Action>
     {
         /// <summary>
         /// The cost of the operation,
@@ -59,7 +60,7 @@ namespace EightPuzzle
         /// <returns><see langword="true" /> if the specified <see cref="Action" /> is equal to this instance; otherwise, <see langword="false" />.</returns>
         public bool Equals(Action other)
         {
-            return Cost.Equals(other.Cost) && VisitedNodeId == other.VisitedNodeId && Move.Equals(other.Move) && Equals(State, other.State);
+            return State.SequenceEqual(other.State);
         }
 
         /// <summary>
@@ -81,10 +82,12 @@ namespace EightPuzzle
         {
             unchecked
             {
-                var hashCode = Cost.GetHashCode();
-                hashCode = (hashCode*397) ^ VisitedNodeId;
-                hashCode = (hashCode*397) ^ Move.GetHashCode();
-                hashCode = (hashCode*397) ^ (State != null ? State.GetHashCode() : 0);
+                if (State == null) return 0;
+                var hashCode = State[0];
+                for (var i = 1; i < State.Length; ++i)
+                {
+                    hashCode = (hashCode*397) ^ State[i];
+                }
                 return hashCode;
             }
         }
@@ -129,5 +132,7 @@ namespace EightPuzzle
 
             return String.Format("move [{0}] {1}", movedTile, direction);
         }
+
+        
     }
 }

@@ -29,9 +29,9 @@ namespace EightPuzzle
 
             int[] puzzle =
             {
-                1, 6, 4,
-                8, 7, EmptyFieldValue,
-                3, 2, 5
+                8, 1, 7,
+                4, 5, 6,
+                2, EmptyFieldValue, 3
             };
 
             int[] goal =
@@ -70,6 +70,11 @@ namespace EightPuzzle
                                    // add the initial state
                                    new Action(0, -1, default(Move), puzzle, 0)
                                };
+            var visitedNodesHash = new Dictionary<Action, Action>
+                               {
+                                   // add the initial state
+                                   {visitedNodes[0], visitedNodes[0]}
+                               };
 
             // the fringe contains all nodes that are actively considered
             // for the solution path.
@@ -104,6 +109,21 @@ namespace EightPuzzle
                 visitedNodes.Add(action);
                 var visitedNodeId = visitedNodes.Count - 1;
 
+                // add to hash for quick look-up
+                Action known;
+                if (visitedNodesHash.TryGetValue(action, out known))
+                {
+                    if (known.Cost > action.Cost)
+                    {
+                        visitedNodesHash.Remove(known);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                visitedNodesHash.Add(action, action);
+
 #if DumpIntermediateStates
                 // dump the selected action
                 Console.WriteLine("Selected state #{0}, parent #{1}:", visitedNodeId, action.VisitedNodeId);
@@ -118,11 +138,8 @@ namespace EightPuzzle
                 }
                 
                 // expand next-generation states and add them to the fringe.
-                var actions = DeterminePossibleActions(visitedNodeId, action.Depth, action.State, puzzleWidth, costAlgorithm, action.Cost);
-
-                // fetch the parent
-                var parent = visitedNodes[action.VisitedNodeId];
-
+                var actions = DeterminePossibleActions(visitedNodeId, action.Depth, action.State, puzzleWidth, costAlgorithm, action.Depth);
+                
                 // we add the new states to the fringe, but take out
                 // all actions that result in the same states we already tested.
                 // the rationale is that all a posteriori states have been 
@@ -131,20 +148,12 @@ namespace EightPuzzle
                 {
                     counter.AddOrUpdate(next.Depth, key => 1, (key, value) => value + 1);
 
-                    // prevent deadlocks by disallowing undoing the previous operation
-                    if (IsSameState(next.State, parent.State)) continue;
-
                     // test if the state has already been seen.
+                    // (this also includes a parent check to disallow action undos)
                     // if so, discard the expanded node only if its cost is higher than the
                     // cost of the already-registered node.
                     // this allows us to keep shortcuts, if found.
-                    /*
-                    var identicalNode = visitedNodes.Where(node => IsSameState(node.State, next.State)).OrderBy(node => node.Cost).FirstOrDefault();
-                    if (identicalNode.Cost > 0 && identicalNode.Cost <= next.Cost)
-                    {
-                        continue;
-                    }
-                    */
+                    if (WasAlreadyAnticipated(visitedNodesHash, next)) continue;
 
                     // skip elements that are already in the fringe
                     if (IsElementInFringe(fringe, next)) continue;
@@ -171,6 +180,30 @@ namespace EightPuzzle
         }
 
         /// <summary>
+        /// Determines whether the specified element was already anticipated for expansion.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="visitedNodes">The visited nodes.</param>
+        /// <param name="next">The next.</param>
+        /// <returns><see langword="true" /> if the specified element was already anticipated; otherwise, <see langword="false" />.</returns>
+        private static bool WasAlreadyAnticipated<T>(T visitedNodes, Action next) where T : IReadOnlyDictionary<Action, Action>
+        {
+            if (visitedNodes.ContainsKey(next))
+            {
+                var action = visitedNodes[next];
+                if (action.Cost > next.Cost)
+                {
+                    // this is a short-cut, so allow it
+                    // take care of collisions in the dictionary though
+                    Debugger.Break();
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Determines whether the specified element is already in the fringe
         /// </summary>
         /// <param name="fringe">The fringe.</param>
@@ -183,7 +216,9 @@ namespace EightPuzzle
                 if (!IsSameState(fringe[f].State, next.State)) continue;
                 if (fringe[f].Cost > next.Cost)
                 {
-                    Debugger.Break();
+                    // this is a short-cut, so allow it
+                    // take care of collisions in the dictionary though
+                    return false;
                 }
                 return true;
             }
@@ -612,7 +647,7 @@ namespace EightPuzzle
 
             // print the header
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Solution found in {0} steps, length {1} steps.", visitedNodes.Count, steps.Count);
+            Console.WriteLine("Solution found in {0} steps, length {1} steps.", visitedNodes.Count, steps.Count - 1);
             Console.ResetColor();
 
             // dump the solution
@@ -621,7 +656,7 @@ namespace EightPuzzle
             {
                 if (stepNumber++ > 0)
                 {
-                    Console.Write("Step {0}: ", stepNumber);
+                    Console.Write("Step {0}: ", stepNumber - 1);
                 }
 
                 var action = steps.Pop();

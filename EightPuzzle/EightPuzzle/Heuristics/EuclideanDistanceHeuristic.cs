@@ -74,6 +74,7 @@ namespace EightPuzzle.Heuristics
                 // since the condition
                 // sqrt(a) > sqrt(b) <=> a > b
                 // is always fulfilled.
+                // Note that unless the square root is taken, the heuristic is NOT admissible.
                 var xdistance = goalCoords.X - tileCoords.X;
                 var ydistance = goalCoords.Y - tileCoords.Y;
                 var distance = (float)xdistance * xdistance + (float)ydistance * ydistance;
