@@ -143,6 +143,11 @@ namespace EightPuzzle
                     {
                         continue;
                     }
+                    */
+
+                    // skip elements that are already in the fringe
+                    if (IsElementInFringe(fringe, next)) continue;
+
                     fringe.Add(next);
                 }
 
@@ -162,6 +167,26 @@ namespace EightPuzzle
 
             // wait for keypress
             if (Debugger.IsAttached) Console.ReadKey(true);
+        }
+
+        /// <summary>
+        /// Determines whether the specified element is already in the fringe
+        /// </summary>
+        /// <param name="fringe">The fringe.</param>
+        /// <param name="next">The next.</param>
+        /// <returns><see langword="true" /> if the specified element is already in the fringe; otherwise, <see langword="false" />.</returns>
+        private static bool IsElementInFringe<T>(T fringe, Action next) where T : IReadOnlyList<Action>
+        {
+            for (var f = 0; f < fringe.Count; ++f)
+            {
+                if (!IsSameState(fringe[f].State, next.State)) continue;
+                if (fringe[f].Cost > next.Cost)
+                {
+                    Debugger.Break();
+                }
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
