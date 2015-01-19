@@ -29,9 +29,9 @@ namespace EightPuzzle
 
             int[] puzzle =
             {
-                1, 6, 4,
-                8, 7, EmptyFieldValue,
-                3, 2, 5
+                8, 1, 7,
+                4, 5, 6,
+                2, EmptyFieldValue, 3
             };
 
             int[] goal =
@@ -58,7 +58,7 @@ namespace EightPuzzle
             var weight = new SimpleWeight(goal, puzzleWidth, puzzleHeight);
 
             // select an heuristic
-            var heuristic = new ManhattanDistanceHeuristic(goal, puzzleWidth, puzzleHeight);
+            var heuristic = new EuclideanDistanceHeuristic(goal, puzzleWidth, puzzleHeight);
 
             // select the algorithm
             var costAlgorithm = new AStarCost(weight, heuristic);
@@ -132,22 +132,20 @@ namespace EightPuzzle
                     counter.AddOrUpdate(next.Depth, key => 1, (key, value) => value + 1);
 
                     // prevent deadlocks by disallowing undoing the previous operation
-                    if (IsSameState(next.State, parent.State)) continue;
+                    // if (IsSameState(next.State, parent.State)) continue;
 
                     // test if the state has already been seen.
                     // if so, discard the expanded node only if its cost is higher than the
                     // cost of the already-registered node.
                     // this allows us to keep shortcuts, if found.
-                    /*
                     var identicalNode = visitedNodes.Where(node => IsSameState(node.State, next.State)).OrderBy(node => node.Cost).FirstOrDefault();
                     if (identicalNode.Cost > 0 && identicalNode.Cost <= next.Cost)
                     {
                         continue;
                     }
-                    */
 
                     // skip elements that are already in the fringe
-                    if (IsElementInFringe(fringe, next)) continue;
+                    // if (IsElementInFringe(fringe, next)) continue;
 
                     fringe.Add(next);
                 }
