@@ -173,7 +173,7 @@ namespace EightPuzzle
         /// <returns><see langword="true" /> if the specified element was already anticipated; otherwise, <see langword="false" />.</returns>
         private static bool WasAlreadyAnticipated<T>(T visitedNodes, Action next) where T : IReadOnlyList<Action>
         {
-            for (var f = 0; f < visitedNodes.Count; ++f)
+            for (var f = visitedNodes.Count-1; f >= 0; --f)
             {
                 if (!IsSameState(visitedNodes[f].State, next.State)) continue;
                 if (visitedNodes[f].Cost > next.Cost)
