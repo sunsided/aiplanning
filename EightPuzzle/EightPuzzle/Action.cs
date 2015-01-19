@@ -5,7 +5,7 @@ namespace EightPuzzle
     /// <summary>
     /// Struct Action
     /// </summary>
-    internal struct Action : IEquatable<Action>
+    internal sealed class Action : IEquatable<Action>
     {
         /// <summary>
         /// The cost of the operation,
