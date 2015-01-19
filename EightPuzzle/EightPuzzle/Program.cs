@@ -141,7 +141,7 @@ namespace EightPuzzle
                     if (WasAlreadyAnticipated(visitedNodes, next)) continue;
 
                     // skip elements that are already in the fringe
-                    // if (IsElementInFringe(fringe, next)) continue;
+                    if (IsElementInFringe(fringe, next)) continue;
 
                     fringe.Add(next);
                 }
