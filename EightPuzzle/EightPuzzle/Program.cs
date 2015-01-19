@@ -647,7 +647,7 @@ namespace EightPuzzle
 
             // print the header
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Solution found in {0} steps, length {1} steps.", visitedNodes.Count, steps.Count);
+            Console.WriteLine("Solution found in {0} steps, length {1} steps.", visitedNodes.Count, steps.Count - 1);
             Console.ResetColor();
 
             // dump the solution
@@ -656,7 +656,7 @@ namespace EightPuzzle
             {
                 if (stepNumber++ > 0)
                 {
-                    Console.Write("Step {0}: ", stepNumber);
+                    Console.Write("Step {0}: ", stepNumber - 1);
                 }
 
                 var action = steps.Pop();
