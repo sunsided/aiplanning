@@ -70,6 +70,11 @@ namespace EightPuzzle
                                    // add the initial state
                                    new Action(0, -1, default(Move), puzzle, 0)
                                };
+            var visitedNodesHash = new Dictionary<Action, Action>
+                               {
+                                   // add the initial state
+                                   {visitedNodes[0], visitedNodes[0]}
+                               };
 
             // the fringe contains all nodes that are actively considered
             // for the solution path.
@@ -104,6 +109,9 @@ namespace EightPuzzle
                 visitedNodes.Add(action);
                 var visitedNodeId = visitedNodes.Count - 1;
 
+                // add to hash for quick look-up
+                visitedNodesHash.Add(action, action);
+
 #if DumpIntermediateStates
                 // dump the selected action
                 Console.WriteLine("Selected state #{0}, parent #{1}:", visitedNodeId, action.VisitedNodeId);
@@ -133,7 +141,7 @@ namespace EightPuzzle
                     // if so, discard the expanded node only if its cost is higher than the
                     // cost of the already-registered node.
                     // this allows us to keep shortcuts, if found.
-                    if (WasAlreadyAnticipated(visitedNodes, next)) continue;
+                    if (WasAlreadyAnticipated(visitedNodesHash, next)) continue;
 
                     // skip elements that are already in the fringe
                     if (IsElementInFringe(fringe, next)) continue;
@@ -166,14 +174,17 @@ namespace EightPuzzle
         /// <param name="visitedNodes">The visited nodes.</param>
         /// <param name="next">The next.</param>
         /// <returns><see langword="true" /> if the specified element was already anticipated; otherwise, <see langword="false" />.</returns>
-        private static bool WasAlreadyAnticipated<T>(T visitedNodes, Action next) where T : IReadOnlyList<Action>
+        private static bool WasAlreadyAnticipated<T>(T visitedNodes, Action next) where T : IReadOnlyDictionary<Action, Action>
         {
-            for (var f = visitedNodes.Count-1; f >= 0; --f)
+            if (visitedNodes.ContainsKey(next))
             {
-                if (!IsSameState(visitedNodes[f].State, next.State)) continue;
-                if (visitedNodes[f].Cost > next.Cost)
+                var action = visitedNodes[next];
+                if (action.Cost > next.Cost)
                 {
+                    // this is a short-cut, so allow it
+                    // take care of collisions in the dictionary though
                     Debugger.Break();
+                    return false;
                 }
                 return true;
             }
@@ -193,7 +204,10 @@ namespace EightPuzzle
                 if (!IsSameState(fringe[f].State, next.State)) continue;
                 if (fringe[f].Cost > next.Cost)
                 {
+                    // this is a short-cut, so allow it
+                    // take care of collisions in the dictionary though
                     Debugger.Break();
+                    return false;
                 }
                 return true;
             }
