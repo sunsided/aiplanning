@@ -118,7 +118,7 @@ namespace EightPuzzle
                 }
                 
                 // expand next-generation states and add them to the fringe.
-                var actions = DeterminePossibleActions(visitedNodeId, action.Depth, action.State, puzzleWidth, costAlgorithm, action.Cost);
+                var actions = DeterminePossibleActions(visitedNodeId, action.Depth, action.State, puzzleWidth, costAlgorithm, action.Depth);
 
                 // fetch the parent
                 var parent = visitedNodes[action.VisitedNodeId];
@@ -183,7 +183,7 @@ namespace EightPuzzle
                 if (!IsSameState(fringe[f].State, next.State)) continue;
                 if (fringe[f].Cost > next.Cost)
                 {
-                    Debugger.Break();
+                    return false;
                 }
                 return true;
             }
